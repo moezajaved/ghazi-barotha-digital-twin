@@ -1,4 +1,8 @@
 # CHANGELOG
+## 2026-10-12 (Phase 1 review)
+- `backend/model.py`: `steady_state()` raises ValueError for y0 outside [y_min, 1] or h_p0 <= tailwater (previously produced a non-equilibrium silently); added swing-equation note to JSON limitations.
+- Tests: 16 -> 18 (calibration identity separated from the model's full-gate equilibrium 291.67 MW; invalid steady-state inputs).
+- Docs corrected: 292.69 MW described as a calibration identity; pond eigenvalue -1.7e-6; review section in testing_and_validation.md. No published value changed.
 ## 2026-10-12 (Phase 1)
 - Added `backend/model.py`, `tests/test_model.py`, `pytest.ini`, `requirements.txt`. Why: single-unit model with state-space extraction.
 - Generated `exports/` (A, B, C, D CSV and state_space_model.json). Why: required exportable matrices with metadata.

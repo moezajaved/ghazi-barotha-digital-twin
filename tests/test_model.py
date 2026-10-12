@@ -74,11 +74,26 @@ def test_operating_point_is_equilibrium(p, lin):
     assert f0 == pytest.approx(50.0)
 
 
-def test_full_gate_design_point_matches_hand_calc(p):
-    # y=1 at design head must give Q_full; power = eta*rho*g*Q*H (calculated estimate, not a measurement)
+def test_calibration_identity(p):
+    # Cg is CALIBRATED so that y=1 at 69 m gives 460 m3/s, so 292.687 MW is an identity, not an independent result.
     Q = p["Cg"] * 1.0 * np.sqrt(69.0)
     assert Q == pytest.approx(460.0)
     assert 0.94 * RHO_G * Q * 69 / 1e6 == pytest.approx(292.687, abs=1e-3)
+
+
+def test_full_gate_equilibrium_of_the_model(p):
+    # What the implemented equations give at normal pond level and full gate (friction lowers head and flow slightly).
+    s = m.steady_state(p, y0=1.0)
+    Q, h_t, P, _ = s["y0"]
+    assert np.abs(m.rhs(s["x0"], s["u0"], p)).max() < 1e-9
+    assert (Q, h_t, P) == pytest.approx((459.467, 68.840, 291.672), abs=1e-3)
+
+
+def test_steady_state_rejects_inconsistent_inputs(p):
+    with pytest.raises(ValueError):
+        m.steady_state(p, y0=1.2)
+    with pytest.raises(ValueError):
+        m.steady_state(p, h_p0=p["z_tw"] - 1)
 
 
 def test_water_starting_time(p, lin):

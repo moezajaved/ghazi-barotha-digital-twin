@@ -9,7 +9,7 @@ Phase 1 (data + mathematical model + state-space export) done and tested. See `P
 ```
 cd Documents\Ghazi_Barotha_Digital_Twin
 pip install -r requirements.txt
-python -m pytest          # runs the 16 tests
+python -m pytest          # runs the 18 tests
 python -m backend.model   # prints the operating point and writes exports\A.csv, B.csv, C.csv, D.csv, state_space_model.json
 ```
 

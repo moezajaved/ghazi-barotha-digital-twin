@@ -39,10 +39,13 @@ Gate position is clipped to [y_min, 1] inside the head calculation, and y_cmd to
 
 ## Operating point (calculated)
 Pond 334 m, gate y = 400/460 = 0.8696, equilibrium: Q = 400 m3/s, h_t = 69 m, **P_gen = 254.51 MW** (calculated, not measured), f = 50 Hz.
-Full gate at 69 m gives 292.69 MW (calculated); the brochure's 290 MW and 295 MW per-unit figures are both within about 1% of it. The brochure conflict is preserved, and the model uses neither.
+**292.69 MW** = 0.94*rho*g*460*69 is a calculated estimate, and it is an identity: Cg is calibrated so that full gate at 69 m gives 460 m3/s (p.17), so it is not an independent model result.
+The model's own full-gate equilibrium at normal pond level (334 m) is **291.67 MW** (Q = 459.47 m3/s, h_t = 68.84 m; assumed friction lowers head and flow slightly).
+The brochure's 290 MW and 295 MW per-unit figures are both within about 1% of either value. The brochure conflict is preserved, and the model uses neither.
+Hand checks (independent of the code): P(400, 69) = 254.511 MW; five entries of A and B match closed-form values to 6 digits (see testing_and_validation.md).
 Water starting time T_w = L*Q0/(g*A*H0) = 1.487 s.
 
 ## Open-loop behaviour (simulated)
-- Eigenvalues (1/s): -2.0 (gate servo, = 1/T_y), -1.355 (penstock flow), -0.1667 (speed, = D/2H), -2e-6 (pond level), 0 (rotor angle integrator).
+- Eigenvalues (1/s): -2.0 (gate servo, = 1/T_y), -1.355 (penstock flow), -0.1667 (speed, = D/2H), -1.7e-6 (pond level), 0 (rotor angle integrator).
 - Gate opening is non-minimum phase: +2% gate command gives -3.7 MW at 0.3 s, then +5.7 MW at 15 s.
 - A 20 MW load drop with no governor drives frequency to about 53 Hz (assumed D and H). A governor is needed; that is Phase 2.

@@ -21,5 +21,6 @@ Calculated (depend on the above): kf, z_tw, A_pond, and Cg / y_opt (which assume
 - Voltage "515v 3:18 KV" (p.12) is garbled: flagged `unconfirmed`, not used.
 
 ## Limitations
-Rigid water column (no water hammer); constant efficiency; Francis speed effects ignored; isolated-unit swing equation, no grid;
+Rigid water column (no water hammer); constant efficiency, and P_gen (already net of generator losses via the combined 94%) is used as the swing-equation input, a small simplification;
+live volume supports 3.1-3.5 h of 5-unit operation at 460-400 m3/s versus the brochure's ~4 h (channel inflow during peak not modelled; consistent, no change needed); Francis speed effects ignored; isolated-unit swing equation, no grid;
 single unit, open loop (no governor yet); no headpond level-volume curve; no validation against plant data.

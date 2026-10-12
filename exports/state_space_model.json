@@ -317,6 +317,7 @@
     "Rigid water column; no water hammer / elasticity.",
     "Francis speed effects on flow and efficiency ignored; constant eta.",
     "Isolated-unit swing equation with load damping; no grid or network model.",
+    "P_gen (which includes generator losses via the combined 94% efficiency) is used as mechanical input power in the swing equation.",
     "Brochure has a 290 MW vs 295 MW per-unit discrepancy; the model does not use either rating."
   ]
 }

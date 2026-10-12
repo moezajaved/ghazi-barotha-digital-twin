@@ -11,7 +11,8 @@
 backend/{__init__,model}.py, tests/test_model.py, pytest.ini, requirements.txt, exports/*, source_data/source_data_register.csv (schema), documentation/*, README, PROGRESS, PROJECT_CONTEXT, CHANGELOG.
 
 ## Tests actually run
-`python -m pytest`: 16 passed in 1.40 s (2026-10-12). `python -m backend.model` ran; Jacobian numeric-vs-analytic max diff 1.6e-7.
+`python -m pytest`: 18 passed in 1.17 s (2026-10-12, after the Phase 1 engineering review; was 16 before it).
+Review result: equations, dimensions, matrix sizes, 254.51 MW and published values correct; 292.69 MW is a calibration identity (model full-gate equilibrium 291.67 MW); `steady_state` now rejects y0 > 1. `python -m backend.model` ran; Jacobian numeric-vs-analytic max diff 1.6e-7.
 Calculated/simulated (not measured): P0 = 254.51 MW at Q=400 m3/s, 69 m; full-gate calc 292.69 MW; Tw = 1.487 s.
 
 ## Known issues

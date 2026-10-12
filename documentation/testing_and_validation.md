@@ -1,7 +1,17 @@
 # Testing and validation
 
 ## Phase 1: `python -m pytest` (run 2026-10-12; Python 3.13.16, numpy 2.5.3, scipy 1.18.1)
-**Result: 16 passed in 1.40 s.**
+**Result: 16 passed in 1.40 s.** After the engineering review (below): **18 passed in 1.17 s.**
+
+## Engineering review (2026-10-12)
+Checked: dimensional consistency of every equation (all terms reduce to m/s, m3/s2, 1/s, 1/s, rad/s as appropriate); matrix sizes (A 5x5, B 5x3, C 4x5, D 4x3, exported files reloaded and matched);
+independent closed-form hand values for P(400,69) = 254.511 MW and for A[1,0], A[1,1], A[1,2], A[3,1], A[3,2], A[3,3], B[3,1] (all agree to 6 digits); eigenvalues.
+Findings and fixes:
+1. 292.69 MW is a calibration identity, not a model result; the model's full-gate equilibrium is 291.67 MW. Docs corrected; tests now separate the two.
+2. `steady_state()` silently accepted gate y0 > 1 (residual 118, not an equilibrium). Now raises ValueError; test added.
+3. Pond eigenvalue is -1.69e-6 (docs said -2e-6, a rounding). Corrected.
+4. Swing equation uses P_gen (net of generator losses) as input power: documented as a simplification, no code change.
+No error found in the equations, power calculation, operating point, matrix dimensions or published values.
 
 | Area | Tests |
 |---|---|

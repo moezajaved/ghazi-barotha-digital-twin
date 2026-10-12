@@ -161,6 +161,11 @@ def steady_state(p, y0: float | None = None, h_p0: float | None = None) -> dict:
     """Equilibrium for a given gate position and pond level (w=1, delta=0, Q_in=Q, P_load=P_gen)."""
     y0 = p["y_opt"] if y0 is None else y0
     h_p0 = p["z_pond"] if h_p0 is None else h_p0
+    # The dynamics clip the gate to [y_min, 1]; an equilibrium outside that range would not be one.
+    if not (p["y_min"] <= y0 <= 1.0):
+        raise ValueError(f"y0 must be within [{p['y_min']}, 1.0], got {y0}")
+    if h_p0 <= p["z_tw"]:
+        raise ValueError(f"h_p0 must exceed the tailwater level {p['z_tw']} m, got {h_p0}")
     Q0 = np.sqrt((h_p0 - p["z_tw"]) / (p["kf"] + 1.0 / (p["Cg"] * y0) ** 2))
     x0 = np.array([h_p0, Q0, y0, 1.0, 0.0])
     P0 = outputs(x0, None, p)[2]
@@ -287,6 +292,7 @@ def export_state_space(outdir: Path, params: dict[str, Param], lin: dict) -> Non
             "Rigid water column; no water hammer / elasticity.",
             "Francis speed effects on flow and efficiency ignored; constant eta.",
             "Isolated-unit swing equation with load damping; no grid or network model.",
+            "P_gen (which includes generator losses via the combined 94% efficiency) is used as mechanical input power in the swing equation.",
             "Brochure has a 290 MW vs 295 MW per-unit discrepancy; the model does not use either rating.",
         ],
     }
