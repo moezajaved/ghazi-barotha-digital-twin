@@ -1,65 +1,65 @@
-category,parameter,value,unit,pdf_page,classification,note
-Plant,Installed capacity,1450,MW,4,Brochure,"5 x 290 MW (p.4, p.17)"
-Plant,Average annual energy,6600,GWh,4,Brochure,
-Plant,Number of units,5,-,12,Brochure,
-Plant,Rated output per unit,290,MW,17,Brochure,"pp.4, 7, 17"
-Plant,Turbine full-gate output,295,MW,12,Brochure - conflict,Differs from 290 MW; assumed full-gate maximum (assumption)
-Plant,Gross river drop (Tarbela tailrace to Haro confluence),76,m,4,Brochure,Over 63 km reach
-Plant,Reach length for river drop,63,km,4,Brochure,
-Plant,Design head,69,m,17,Brochure,
-Plant,Combined generating efficiency,94,%,17,Brochure,Five Francis turbines + generators
-Plant,"Design flow per unit, optimum gate",400,m3/s,17,Brochure,
-Plant,"Design flow per unit, full gate",460,m3/s,17,Brochure,p.7 and p.17
-Plant,Turbine type,Francis,-,12,Brochure,
-Plant,Peak generation duration supported,4,h,7,Brochure,Headpond live storage supports ~4 h daily peak
-Electrical,Transformer rating (single-phase unit),107.5,MVA,17,Brochure,p.12 lists 3 x 107.5 MVA per bank
-Electrical,Transformer banks (3-phase),5,-,17,Brochure,
-Electrical,Rated voltage HV:LV,515v 3:18,kV,12,Brochure - ambiguous,"Garbled in source; probably 500/sqrt(3) : 18 kV, unconfirmed"
-Electrical,Switchyard 500 kV bays,6,-,12,Brochure,
-Electrical,Switchyard layout,Breaker and half,-,12,Brochure,
-Electrical,Transmission,500 kV double circuit,kV,17,Brochure,To WAPDA national grid
-Electrical,Cranes (count),12,-,17,Brochure,Capacity 6 to 450 t
-Electrical,Control system,"2 DCS (Barrage, Power Complex), fibre-optic link",-,17,Brochure,
-Penstock,Number,5,-,12,Brochure,
-Penstock,Diameter,10.6,m,12,Brochure,
-Penstock,Length,222,m,12,Brochure,
-Barrage,Normal pond level,340,m,12,Brochure,
-Barrage,Design flood,18700,m3/s,12,Brochure,
-Barrage,Survival flood,46200,m3/s,12,Brochure,
-Barrage,Standard bays - openings,20,-,12,Brochure,
-Barrage,Standard bays - crest level,332.2,m,12,Brochure,
-Barrage,Head regulator - openings,8,-,12,Brochure,
-Barrage,Head regulator - crest level,333,m,12,Brochure,
-Barrage,Undersluices - openings,8,-,12,Brochure,
-Barrage,Undersluices - crest level,326,m,12,Brochure,
-Power channel,Design flow,1600,m3/s,12,Brochure,
-Power channel,Length,51906,m,12,Brochure,
-Power channel,Longitudinal slope,1:9600,-,12,Brochure,
-Power channel,Full supply depth,9,m,12,Brochure,
-Power channel,Bed width,58.4,m,12,Brochure,
-Power channel,Side slope,1V:2H,-,12,Brochure,
-Power channel,Lining thickness,135,mm,12,Brochure,
-Power channel,Road bridges,34,-,12,Brochure,
-Power channel,Railway bridge,1,-,12,Brochure,
-Power channel,Pedestrian crossings,12,-,12,Brochure,
-Power channel,Superpassages,27,-,12,Brochure,
-Power channel,Drainage inlets,24,-,12,Brochure,
-Power channel,Escapes,5,-,12,Brochure,
-Power channel,Culverts,1,-,12,Brochure,
-Power complex,Headponds normal pond level,334,m,12,Brochure,
-Power complex,Headponds live volume (two ponds combined),25.5,Mm3,12,Brochure,p.7: approx. 25.5 million m3
-Power complex,Siphon spillway discharge capacity,1600,m3/s,12,Brochure,
-Power complex,Siphon spillway crest level,334.5,m,12,Brochure,
-Power complex,Intake - openings,10,-,12,Brochure,
-Power complex,Intake - crest level,305.5,m,12,Brochure,
-Power complex,South sill - openings,3,-,12,Brochure,
-Power complex,South sill - level,323,m,12,Brochure,
-Power complex,North sill - openings,10,-,12,Brochure,
-Power complex,North sill - level,321,m,12,Brochure,
-Project,"Cost approved (PC-I, July 1994)",89840,million Rs,13,Brochure,
-Project,Actual cost incurred,96957,million Rs,13,Brochure,
-Project,EIRR,22.19,%,13,Brochure,
-Project,FIRR,13.76,%,13,Brochure,
-Project,Units 1-2 commissioned,19 Aug 2003,-,15,Brochure,
-Project,Unit 5 commissioned,Apr 2004,-,13,Brochure,
-Project,North headpond completed,Dec 2004,-,13,Brochure,
+category,parameter,value,unit,pdf_page,classification,flag,note
+Plant,Installed capacity,1450,MW,4,published,,"5 x 290 MW (p.4, p.17)"
+Plant,Average annual energy,6600,GWh,4,published,,
+Plant,Number of units,5,-,12,published,,
+Plant,Rated output per unit,290,MW,17,published,conflict (290 MW vs 295 MW per unit; neither declared correct),"pp.4, 7, 17"
+Plant,Turbine full-gate output,295,MW,12,published,conflict (290 MW vs 295 MW per unit; neither declared correct),Differs from 290 MW; assumed full-gate maximum (assumption)
+Plant,Gross river drop (Tarbela tailrace to Haro confluence),76,m,4,published,,Over 63 km reach
+Plant,Reach length for river drop,63,km,4,published,,
+Plant,Design head,69,m,17,published,,
+Plant,Combined generating efficiency,94,%,17,published,,Five Francis turbines + generators
+Plant,"Design flow per unit, optimum gate",400,m3/s,17,published,,
+Plant,"Design flow per unit, full gate",460,m3/s,17,published,,p.7 and p.17
+Plant,Turbine type,Francis,-,12,published,,
+Plant,Peak generation duration supported,4,h,7,published,,Headpond live storage supports ~4 h daily peak
+Electrical,Transformer rating (single-phase unit),107.5,MVA,17,published,,p.12 lists 3 x 107.5 MVA per bank
+Electrical,Transformer banks (3-phase),5,-,17,published,,
+Electrical,Rated voltage HV:LV,515v 3:18,kV,12,published,unconfirmed (garbled in source; do not use),"Garbled in source; probably 500/sqrt(3) : 18 kV, unconfirmed"
+Electrical,Switchyard 500 kV bays,6,-,12,published,,
+Electrical,Switchyard layout,Breaker and half,-,12,published,,
+Electrical,Transmission,500 kV double circuit,kV,17,published,,To WAPDA national grid
+Electrical,Cranes (count),12,-,17,published,,Capacity 6 to 450 t
+Electrical,Control system,"2 DCS (Barrage, Power Complex), fibre-optic link",-,17,published,,
+Penstock,Number,5,-,12,published,,
+Penstock,Diameter,10.6,m,12,published,,
+Penstock,Length,222,m,12,published,,
+Barrage,Normal pond level,340,m,12,published,,
+Barrage,Design flood,18700,m3/s,12,published,,
+Barrage,Survival flood,46200,m3/s,12,published,,
+Barrage,Standard bays - openings,20,-,12,published,,
+Barrage,Standard bays - crest level,332.2,m,12,published,,
+Barrage,Head regulator - openings,8,-,12,published,,
+Barrage,Head regulator - crest level,333,m,12,published,,
+Barrage,Undersluices - openings,8,-,12,published,,
+Barrage,Undersluices - crest level,326,m,12,published,,
+Power channel,Design flow,1600,m3/s,12,published,,
+Power channel,Length,51906,m,12,published,,
+Power channel,Longitudinal slope,1:9600,-,12,published,,
+Power channel,Full supply depth,9,m,12,published,,
+Power channel,Bed width,58.4,m,12,published,,
+Power channel,Side slope,1V:2H,-,12,published,,
+Power channel,Lining thickness,135,mm,12,published,,
+Power channel,Road bridges,34,-,12,published,,
+Power channel,Railway bridge,1,-,12,published,,
+Power channel,Pedestrian crossings,12,-,12,published,,
+Power channel,Superpassages,27,-,12,published,,
+Power channel,Drainage inlets,24,-,12,published,,
+Power channel,Escapes,5,-,12,published,,
+Power channel,Culverts,1,-,12,published,,
+Power complex,Headponds normal pond level,334,m,12,published,,
+Power complex,Headponds live volume (two ponds combined),25.5,Mm3,12,published,,p.7: approx. 25.5 million m3
+Power complex,Siphon spillway discharge capacity,1600,m3/s,12,published,,
+Power complex,Siphon spillway crest level,334.5,m,12,published,,
+Power complex,Intake - openings,10,-,12,published,,
+Power complex,Intake - crest level,305.5,m,12,published,,
+Power complex,South sill - openings,3,-,12,published,,
+Power complex,South sill - level,323,m,12,published,,
+Power complex,North sill - openings,10,-,12,published,,
+Power complex,North sill - level,321,m,12,published,,
+Project,"Cost approved (PC-I, July 1994)",89840,million Rs,13,published,,
+Project,Actual cost incurred,96957,million Rs,13,published,,
+Project,EIRR,22.19,%,13,published,,
+Project,FIRR,13.76,%,13,published,,
+Project,Units 1-2 commissioned,19 Aug 2003,-,15,published,,
+Project,Unit 5 commissioned,Apr 2004,-,13,published,,
+Project,North headpond completed,Dec 2004,-,13,published,,

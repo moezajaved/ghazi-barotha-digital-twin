@@ -1,13 +1,21 @@
 # Ghazi Barotha Digital Twin (simulation prototype)
-University EE project. Simulation-based digital twin of the Ghazi Barotha Hydropower Project (1450 MW, Pakistan).
-NOT connected to the real plant and NOT validated against real operating data.
+University EE project: simulation-based model of the Ghazi Barotha Hydropower Project (1450 MW, Pakistan).
+Not connected to the real plant and not validated against real operating data.
 
 ## Status
-See PROGRESS.md. Currently: Phase 0 (data and project setup) done; Phase 1 (state-space model) not started.
+Phase 1 (data + mathematical model + state-space export) done and tested. See `PROGRESS.md`. Dashboard and 3D scene not built yet.
 
-## Run instructions
-Nothing runnable yet. Planned: Python 3 (NumPy/SciPy/python-control) for backend and tests; browser (Three.js via CDN) for frontend.
-Tests (once they exist): `python -m pytest tests`
+## Run (Windows, once Python 3 is installed from python.org; tick "Add Python to PATH")
+```
+cd Documents\Ghazi_Barotha_Digital_Twin
+pip install -r requirements.txt
+python -m pytest          # runs the 16 tests
+python -m backend.model   # prints the operating point and writes exports\A.csv, B.csv, C.csv, D.csv, state_space_model.json
+```
 
-## Data labelling rule
-Every value is tagged Brochure (teacher PDF, with page), Assumption, or Simulated.
+## Layout
+`backend/model.py` model + linearisation + export; `tests/`; `exports/` generated matrices; `source_data/` brochure + parameter register;
+`documentation/` equations, assumptions, method, testing; recovery files `PROGRESS.md`, `PROJECT_CONTEXT.md`, `CHANGELOG.md`.
+
+## Data labelling
+Every value is `published` (brochure, with page), `calculated`, or `assumed`; simulation results are labelled as simulated.

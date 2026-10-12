@@ -1,0 +1,322 @@
+{
+  "model": "GBHP single generating unit, open-loop plant (no governor), rigid water column",
+  "status": "SIMULATION MODEL. Not connected to the real plant. Not validated against real operating data.",
+  "equations": "documentation/mathematical_model.md",
+  "form": "dx/dt = A x + B u ; y = C x + D u  (deviation variables about the operating point)",
+  "states": [
+    {
+      "name": "h_p",
+      "description": "Headpond level (per-unit share of pond)",
+      "unit": "m"
+    },
+    {
+      "name": "Q",
+      "description": "Penstock / turbine flow",
+      "unit": "m3/s"
+    },
+    {
+      "name": "y",
+      "description": "Gate (wicket gate) position",
+      "unit": "pu, 0..1"
+    },
+    {
+      "name": "w",
+      "description": "Rotor speed",
+      "unit": "pu of synchronous speed"
+    },
+    {
+      "name": "delta",
+      "description": "Rotor angle relative to synchronous reference",
+      "unit": "rad"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "y_cmd",
+      "description": "Gate position command",
+      "unit": "pu, 0..1"
+    },
+    {
+      "name": "P_load",
+      "description": "Electrical load on the unit",
+      "unit": "MW"
+    },
+    {
+      "name": "Q_in",
+      "description": "Inflow to this unit's share of the headpond (power channel)",
+      "unit": "m3/s"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "Q",
+      "description": "Turbine flow",
+      "unit": "m3/s"
+    },
+    {
+      "name": "h_t",
+      "description": "Net head across turbine",
+      "unit": "m"
+    },
+    {
+      "name": "P_gen",
+      "description": "Generated electrical power = eta*rho*g*Q*h_t",
+      "unit": "MW"
+    },
+    {
+      "name": "f",
+      "description": "Electrical frequency = f_nom*w",
+      "unit": "Hz"
+    }
+  ],
+  "operating_point": {
+    "definition": "Normal pond level, gate at optimum opening (Q_opt/Q_full), unit in equilibrium (w=1, P_load=P_gen, Q_in=Q)",
+    "x0": {
+      "h_p": 334.0,
+      "Q": 400.0,
+      "y": 0.8695652173913043,
+      "w": 1.0,
+      "delta": 0.0
+    },
+    "u0": {
+      "y_cmd": 0.8695652173913043,
+      "P_load": 254.51064000000002,
+      "Q_in": 400.0
+    },
+    "y0": {
+      "Q": 400.0,
+      "h_t": 69.0,
+      "P_gen": 254.51064000000002,
+      "f": 50.0
+    },
+    "water_starting_time_s": 1.486597012726567
+  },
+  "linearization": {
+    "method": "Numerical Jacobian, central differences, step = 1e-5*max(|z0|,1)",
+    "check": "Compared with hand-derived analytic Jacobians (backend.model.analytic_jacobians)",
+    "max_abs_diff_vs_analytic": 1.6096907984319841e-07,
+    "D_note": "D is zero because the outputs depend on states only (the gate is a servo state, not a direct input)."
+  },
+  "eigenvalues": [
+    {
+      "re": -1.9999999999908977,
+      "im": 0.0
+    },
+    {
+      "re": -1.3551017659245597,
+      "im": 0.0
+    },
+    {
+      "re": -0.16666666666683336,
+      "im": 0.0
+    },
+    {
+      "re": -1.6927655508425232e-06,
+      "im": 0.0
+    },
+    {
+      "re": 0.0,
+      "im": 0.0
+    }
+  ],
+  "parameters": [
+    {
+      "key": "n_units",
+      "description": "Number of generating units",
+      "value": 5.0,
+      "unit": "-",
+      "classification": "published",
+      "source": "Brochure PDF p.12 (Plant: Number of units)"
+    },
+    {
+      "key": "Q_full",
+      "description": "Flow per unit at full gate, design head",
+      "value": 460.0,
+      "unit": "m3/s",
+      "classification": "published",
+      "source": "Brochure PDF p.17 (Plant: Design flow per unit, full gate)"
+    },
+    {
+      "key": "Q_opt",
+      "description": "Flow per unit at optimum gate, design head",
+      "value": 400.0,
+      "unit": "m3/s",
+      "classification": "published",
+      "source": "Brochure PDF p.17 (Plant: Design flow per unit, optimum gate)"
+    },
+    {
+      "key": "H_design",
+      "description": "Design (net) head",
+      "value": 69.0,
+      "unit": "m",
+      "classification": "published",
+      "source": "Brochure PDF p.17 (Plant: Design head)"
+    },
+    {
+      "key": "eta",
+      "description": "Combined turbine+generator efficiency",
+      "value": 0.9400000000000001,
+      "unit": "pu",
+      "classification": "published",
+      "source": "Brochure PDF p.17 (Plant: Combined generating efficiency)"
+    },
+    {
+      "key": "D_pen",
+      "description": "Penstock diameter",
+      "value": 10.6,
+      "unit": "m",
+      "classification": "published",
+      "source": "Brochure PDF p.12 (Penstock: Diameter)"
+    },
+    {
+      "key": "L_pen",
+      "description": "Penstock length",
+      "value": 222.0,
+      "unit": "m",
+      "classification": "published",
+      "source": "Brochure PDF p.12 (Penstock: Length)"
+    },
+    {
+      "key": "z_pond",
+      "description": "Headpond normal pond level",
+      "value": 334.0,
+      "unit": "m",
+      "classification": "published",
+      "source": "Brochure PDF p.12 (Power complex: Headponds normal pond level)"
+    },
+    {
+      "key": "V_live",
+      "description": "Headpond live volume, both ponds",
+      "value": 25500000.0,
+      "unit": "m3",
+      "classification": "published",
+      "source": "Brochure PDF p.12 (Power complex: Headponds live volume (two ponds combined))"
+    },
+    {
+      "key": "S_trafo_1ph",
+      "description": "Single-phase transformer rating",
+      "value": 107.5,
+      "unit": "MVA",
+      "classification": "published",
+      "source": "Brochure PDF p.17 (Electrical: Transformer rating (single-phase unit))"
+    },
+    {
+      "key": "hf_design",
+      "description": "Penstock friction head loss at Q_opt",
+      "value": 0.5,
+      "unit": "m",
+      "classification": "assumed",
+      "source": "Loss data not in brochure; short 222 m, 10.6 m-bore penstock so small. Sets tailwater level and damping."
+    },
+    {
+      "key": "dh_live",
+      "description": "Usable headpond drawdown spanning the live volume",
+      "value": 3.0,
+      "unit": "m",
+      "classification": "assumed",
+      "source": "Level-volume curve not in brochure. Sets pond area, i.e. only the slow pond-level dynamics."
+    },
+    {
+      "key": "T_y",
+      "description": "Gate servo time constant",
+      "value": 0.5,
+      "unit": "s",
+      "classification": "assumed",
+      "source": "Servo data not in brochure; typical order for large Francis units."
+    },
+    {
+      "key": "H_inertia",
+      "description": "Unit inertia constant (on S_base)",
+      "value": 3.0,
+      "unit": "s",
+      "classification": "assumed",
+      "source": "Not in brochure; typical hydro generator 2-4 s."
+    },
+    {
+      "key": "D_damp",
+      "description": "Load damping (pu power per pu speed)",
+      "value": 1.0,
+      "unit": "pu",
+      "classification": "assumed",
+      "source": "Not in brochure; typical load-frequency dependence 1-2 pu."
+    },
+    {
+      "key": "f_nom",
+      "description": "Nominal frequency",
+      "value": 50.0,
+      "unit": "Hz",
+      "classification": "assumed",
+      "source": "Not stated in brochure; 50 Hz is the Pakistani grid standard."
+    },
+    {
+      "key": "y_min",
+      "description": "Numerical floor on gate opening",
+      "value": 0.02,
+      "unit": "pu",
+      "classification": "assumed",
+      "source": "Avoids division by zero when the gate is fully closed. Not physical."
+    },
+    {
+      "key": "S_base",
+      "description": "Generator MVA base",
+      "value": 322.5,
+      "unit": "MVA",
+      "classification": "assumed",
+      "source": "Generator MVA is not in brochure; 3 x single-phase transformer rating (pp.12,17) is used as the base."
+    },
+    {
+      "key": "A_pen",
+      "description": "Penstock cross-section",
+      "value": 88.24733763933729,
+      "unit": "m2",
+      "classification": "calculated",
+      "source": "pi*D_pen^2/4"
+    },
+    {
+      "key": "Cg",
+      "description": "Gate-flow coefficient (Q = Cg*y*sqrt(h_t))",
+      "value": 55.37749241945383,
+      "unit": "m2.5/s",
+      "classification": "calculated",
+      "source": "Q_full/sqrt(H_design), taking y=1 as full gate at design head (brochure p.17)"
+    },
+    {
+      "key": "y_opt",
+      "description": "Gate position at optimum flow",
+      "value": 0.8695652173913043,
+      "unit": "pu",
+      "classification": "calculated",
+      "source": "Q_opt/Q_full, assuming flow proportional to gate opening at fixed head"
+    },
+    {
+      "key": "kf",
+      "description": "Penstock friction coefficient (h_f = kf*Q^2)",
+      "value": 3.125e-06,
+      "unit": "s2/m5",
+      "classification": "calculated",
+      "source": "hf_design/Q_opt^2 (depends on assumed hf_design)"
+    },
+    {
+      "key": "z_tw",
+      "description": "Tailwater level (derived)",
+      "value": 264.5,
+      "unit": "m",
+      "classification": "calculated",
+      "source": "z_pond - H_design - hf_design (depends on assumed hf_design)"
+    },
+    {
+      "key": "A_pond",
+      "description": "Headpond surface area per unit",
+      "value": 1700000.0,
+      "unit": "m2",
+      "classification": "calculated",
+      "source": "V_live/dh_live/n_units (depends on assumed dh_live)"
+    }
+  ],
+  "known_limitations": [
+    "Rigid water column; no water hammer / elasticity.",
+    "Francis speed effects on flow and efficiency ignored; constant eta.",
+    "Isolated-unit swing equation with load damping; no grid or network model.",
+    "Brochure has a 290 MW vs 295 MW per-unit discrepancy; the model does not use either rating."
+  ]
+}

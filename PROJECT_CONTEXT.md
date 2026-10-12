@@ -1,8 +1,8 @@
 # PROJECT_CONTEXT
-**Objective:** interactive 3D digital twin prototype + dynamic dashboard + state-space model (dx/dt=Ax+Bu, y=Cx+Du) of Ghazi Barotha; teacher brochure is primary source.
-**Tools (all free):** Python (NumPy/SciPy/python-control), JS + Three.js + uPlot (CDN, no build), Git. Target machine: Windows laptop.
-**Phases:** 0 data/setup, 1 Python state-space, 2 JS sim engine (RK4, PI governor), 3 dashboard, 4 Three.js scene, 5 integration/report.
-**Source-data rules:** never invent plant data; never replace a brochure value with an assumption without logging it in CHANGELOG; tag Brochure/Assumption/Simulated.
-**Key facts:** see source_data/source_data_register.csv. Working assumption: 290 MW rated, 295 MW full-gate.
-**Model equations/state definitions:** TBD in Phase 1 (documentation/mathematical_model.md).
-**Resuming in a new chat:** upload this folder (or at least README.md, PROGRESS.md, PROJECT_CONTEXT.md, source_data/), then say "Resume from PROGRESS.md". Inspect files first; do not redo completed work.
+**Objective:** interactive 3D digital twin prototype + dashboard + state-space model (dx/dt=Ax+Bu, y=Cx+Du) of Ghazi Barotha, for an EE university project. Teacher brochure (`source_data/original_brochure.pdf`) is the primary source. Simulation only; no real-plant link or validation.
+**Tools (free):** Python 3 + NumPy/SciPy/pytest (done); Plotly + local web app + Three.js or Plotly 3D (Phases 2-3). Target: Windows laptop (i5-1245U, 16 GB). Claude Free: keep phases small.
+**Phases:** 0 setup (done), 1 model + state-space (done), 2 dashboard + governor, 3 3D scene, 4 integration/testing, 5 docs/demo guide.
+**Source-data rules:** never invent plant data; published values come from `source_data/source_data_register.csv` (64 rows, with PDF page); assumptions only in `_ASSUMED` in `backend/model.py`, logged in `documentation/assumptions_and_limitations.md`; changing a published value requires a CHANGELOG entry. Tag everything published / calculated / assumed / simulated.
+**Model:** states [h_p, Q, y, w, delta], inputs [y_cmd, P_load, Q_in], outputs [Q, h_t, P_gen, f]; equations in `documentation/mathematical_model.md`. Operating point: pond 334 m, y=400/460, Q=400, h_t=69, P=254.51 MW (calculated).
+**Open issues:** 290 vs 295 MW conflict; garbled voltage (unconfirmed); missing generator/governor/hydraulic data (`source_data/missing_parameters.md`).
+**Resume in a new chat:** upload this folder (or README.md, PROGRESS.md, PROJECT_CONTEXT.md, backend/, tests/, source_data/source_data_register.csv, documentation/, exports/). Say "Resume from PROGRESS.md". Inspect files first, run `python -m pytest`, then continue from the recorded next task. The brochure PDF (15 MB) is only needed for re-checking values.
