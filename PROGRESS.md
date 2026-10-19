@@ -1,25 +1,28 @@
 # PROGRESS
-**Phase:** 1 (data + mathematical model + state-space) COMPLETE. Next: Phase 2 (dashboard).
+**Phase:** 2 (PI/droop governor + dashboard) COMPLETE. Phase 1 complete. Next: Phase 3 (3D plant).
 
-## Done
-- Register verified from the CSV itself: 64 rows (the earlier "63" was a miscount); schema now has `classification` = published and a `flag` column (2 conflict rows, 1 unconfirmed row).
-- `backend/model.py`: single-unit model, steady state, numerical + analytic Jacobians, nonlinear `simulate()`, export.
-- Exports generated: `exports/A.csv, B.csv, C.csv, D.csv, state_space_model.json`.
-- Docs written: mathematical_model, assumptions_and_limitations, state_space_method, testing_and_validation.
+## Done (Phase 2, 2026-10-19)
+- `backend/governor.py`: PI + permanent droop, command limits, gate rate limits, back-calculation anti-windup, closed-loop poles. All settings ASSUMED and documented.
+- `backend/simulator.py`: stepping engine (Radau), history, input validation, CSV export. `app.py`: Streamlit + Plotly dashboard (Run/Pause/Step/Reset, inputs with validation, 7 indicators, 6 graphs, CSV, parameter register).
+- Tests: 77 pytest (18 Phase 1 + 59 new) and optional real-browser script `tests/e2e_browser.py`. Docs updated; `reports/dashboard_phase2.png` saved.
+- Phase 1 files and exports untouched (git diff empty).
 
 ## Files created/changed this phase
-backend/{__init__,model}.py, tests/test_model.py, pytest.ini, requirements.txt, exports/*, source_data/source_data_register.csv (schema), documentation/*, README, PROGRESS, PROJECT_CONTEXT, CHANGELOG.
+New: app.py, backend/{governor,simulator}.py, tests/{test_governor,test_simulator,test_app,e2e_browser}.py, .streamlit/config.toml, reports/dashboard_phase2.png.
+Changed: requirements.txt (+plotly, streamlit), README, PROGRESS, PROJECT_CONTEXT, CHANGELOG, documentation/{mathematical_model,assumptions_and_limitations,testing_and_validation,system_architecture,user_manual}.md.
 
-## Tests actually run
-`python -m pytest`: 18 passed in 1.17 s (2026-10-12, after the Phase 1 engineering review; was 16 before it).
-Review result: equations, dimensions, matrix sizes, 254.51 MW and published values correct; 292.69 MW is a calibration identity (model full-gate equilibrium 291.67 MW); `steady_state` now rejects y0 > 1. `python -m backend.model` ran; Jacobian numeric-vs-analytic max diff 1.6e-7.
-Calculated/simulated (not measured): P0 = 254.51 MW at Q=400 m3/s, 69 m; full-gate calc 292.69 MW; Tw = 1.487 s.
+## Tests actually run (2026-10-19)
+- `python -m pytest`: **77 passed in ~10 s**.
+- `tests/e2e_browser.py` against the real server (Chromium): **13/13 passed** (Run, Pause mid-run, resume, live input change, 320 MW overload, CSV download, Step, Reset, governor off, register).
+- Defects found and fixed: anti-windup chatter (solver failure at 320 MW), a wrong mass-balance test, charts blank while running (browser-only), legend overlap. Details: documentation/testing_and_validation.md.
+- Not run: on Windows (run on Linux with the same commands).
 
-## Known issues
-- Open loop has no governor: a 20 MW load drop pushes frequency to ~53 Hz. Needs a PI/droop governor (Phase 2).
-- Several dynamic parameters are assumptions (see assumptions_and_limitations.md); no validation data.
-- 290 vs 295 MW conflict and the garbled voltage remain unresolved and are not used by the model.
+## Known issues / limitations
+- Governor gains, servo limits, H, D, T_y etc. are assumptions; no validation against plant data.
+- Closed-loop pond-level pole is slightly positive (+3.2e-6 1/s, about 3.6 days): physical for constant-power draw with fixed inflow; runs capped at 1 h.
+- Streamlit repaints the chart each update: ~3% blank at the default 0.6 s refresh; live speed ~9x real time (5 s per 0.6 s).
+- 290 vs 295 MW conflict and garbled voltage unresolved (not used by the model). Single unit only.
 - Project exists only in Claude's temporary cloud workspace until the user downloads the zip.
 
 ## Exact next task
-Phase 2: add a PI governor (assumed gains, documented) in `backend/`, then a minimum local dashboard (Plotly graphs; start/pause/reset/step; inputs: gate/load/inflow; live indicators) driven by `backend.model.simulate`/`rhs`. Add input validation and tests. Update recovery files.
+Phase 3: interactive 3D plant (Three.js or Plotly 3D) built from brochure data with labelled illustrative geometry (barrage, channel at schematic scale, headponds, 5 penstocks, powerhouse, 5 units), driven by `backend.simulator` outputs (gate, flow, head, power, pond level). Decide embedding (Streamlit component vs separate page) first; keep the dashboard working; add tests; update recovery files.

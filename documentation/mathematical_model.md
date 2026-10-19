@@ -48,4 +48,32 @@ Water starting time T_w = L*Q0/(g*A*H0) = 1.487 s.
 ## Open-loop behaviour (simulated)
 - Eigenvalues (1/s): -2.0 (gate servo, = 1/T_y), -1.355 (penstock flow), -0.1667 (speed, = D/2H), -1.7e-6 (pond level), 0 (rotor angle integrator).
 - Gate opening is non-minimum phase: +2% gate command gives -3.7 MW at 0.3 s, then +5.7 MW at 15 s.
-- A 20 MW load drop with no governor drives frequency to about 53 Hz (assumed D and H). A governor is needed; that is Phase 2.
+- A 20 MW load drop with no governor drives frequency to about 53 Hz (assumed D and H). A governor is needed; Phase 2 adds one (below).
+
+---
+# Governor and simulator (Phase 2)
+Code: `backend/governor.py`, `backend/simulator.py`. The Phase 1 plant equations are unchanged; the governor only supplies the gate command.
+**All governor settings are ASSUMED (the brochure has no governor data); see `assumptions_and_limitations.md`.**
+
+State z = [h_p, Q, y, w, delta, xi] (xi = governor integrator, pu gate). Inputs u = [y_set, P_load, Q_in].
+```
+e      = (w_ref - w) - R*(y - y_set)                 speed error with permanent droop R (gate feedback)
+unsat  = y_set + Kp*e + xi
+y_cmd  = clip(unsat, y_lo, y_hi)                      command limits
+dxi/dt = Ki*e + Kb*(y_cmd - unsat)                    PI integrator with back-calculation anti-windup
+dy/dt  = clip((y_cmd - y)/T_y, -rate_close, rate_open)   servo lag with gate velocity limits
+```
+Governor OFF: `y_cmd = clip(y_set, 0, 1)`, xi frozen. In steady state e = 0, so `w = w_ref - R*(y - y_set)`: `y_set` is the load/speed reference.
+Anti-windup is continuous. A first version froze the integrator at saturation; it chattered on the saturation boundary and made every ODE solver fail
+at t = 10.75 s whenever the load exceeded full-gate capacity (found by a failing test, fixed by back-calculation).
+
+**Verified behaviour (simulated, assumed settings)**
+- Closed-loop poles (1/s): -2.663, -0.550, -0.2044 +/- 0.1267j (damping ratio 0.85), 0 (rotor angle), +3.2e-6 (pond level).
+- The pond-level pole is slightly **positive**: with the governor holding power, a lower head draws more flow, and the model has no level regulation.
+  Independent constant-power estimate: +3.5e-6. Time constant about 3.6 days, so growth is < 1.2% over the longest run (1 h). Physical, not a bug.
+- +20 MW load step: frequency dips to 48.37 Hz at 5.8 s, settles to 49.834 Hz (droop prediction matches to 0.002 Hz in the tests),
+  within +/-0.05 Hz of the final value after about 22 s. Governor off: frequency runs away (46.8 Hz after 60 s at 275 MW).
+- Load above full-gate capacity (320 MW): gate saturates at 1.0, integrator stays bounded, frequency settles near 45.6 Hz (predicted 45.61).
+
+**Simulator** (`Simulator`): integrates from the Phase 1 equilibrium with SciPy Radau (rtol 1e-8), stores history every 0.25 s, validates inputs
+(gate 0..1 pu, load 0..S_base = 322.5 MW, inflow 0..460 m3/s, duration 1..3600 s). The t = 0 history row holds the pre-step inputs.
