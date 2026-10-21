@@ -29,3 +29,16 @@ backend/plant3d_component.py  ->  frontend/plant3d/index.html (local Streamlit c
   (real bulk velocity); green bar = gate y; turbine colour = y; generator colour = P_gen/292.7 MW; power lines colour = P_gen; readout panel =
   t, h_p, Q, Q/A, y, w, P_gen, f, h_t. Units 2-5 replicate unit 1 (identical-unit assumption) or can be shown idle.
 - **Cost:** ~63 ms per figure build, ~72 KB per update (measured).
+
+# Phase 4 additions
+```
+app.py sidebar  -> ui/scenario_panel.py -> backend/scenarios.py (build_scenario: validation; ScenarioPlayer: input schedule; assess; results_zip)
+app.py live()   -> ScenarioPlayer.advance(sim, chunk) -> Simulator.step (split exactly at event times)
+app.py tab "State-space model" -> ui/state_space_tab.py -> backend/state_space.py (linearize_at, export_zip, compare_with_run) -> backend/model.py
+check_setup.py  -> quick installation check (no Streamlit needed)
+```
+- A scenario is only a schedule of inputs (load events, governor mode, duration). Results always come from `Simulator`; tests check that a
+  scenario equals stepping the Simulator by hand with the same inputs (identical arrays).
+- While a scenario is active the manual sidebar inputs are disabled (shown, not used); Exit returns to manual mode. Reset restarts the scenario.
+- The governor-OFF reference of the comparison scenario is computed by the same model when the scenario starts (about 0.1 s).
+- `backend/` still has no Streamlit imports; `ui/` only displays.

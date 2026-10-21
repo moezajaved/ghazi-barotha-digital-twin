@@ -24,7 +24,7 @@ def _matches_sim(summary, sim):
 
 def test_3d_tab_renders_without_error(at):
     assert not at.exception
-    assert [t.label for t in at.tabs] == ["Simulation", "3D plant", "Parameter register"]
+    assert [t.label for t in at.tabs] == ["Simulation", "3D plant", "State-space model", "Parameter register"]  # Phase 4 tab
     assert "view3d_summary" in at.session_state
 
 

@@ -71,3 +71,29 @@ Windows launch was not run on Windows; it was run here on Linux with the same co
 4. Overview camera cut off the barrage; widened. In-scene readout text was unreadable; added an HTML readout panel bound to the same values.
 ## Not shown
 Not run on Windows (Linux, same commands). No validation of geometry or behaviour against the real plant.
+
+---
+# Phase 4 (2026-10-22; same versions)
+## Automated: `python -m pytest` -> **210 passed in ~100 s** (142 earlier tests, all passing, + 68 new)
+| File | Tests | Covers |
+|---|---|---|
+| tests/test_scenarios.py | 37 | every scenario completes; scenario == manual stepping (identical arrays); physics of each scenario against independent relations (droop balance, damping balance, saturation at full-gate capacity, overspeed and head rise on rejection); governor ON vs OFF; chunked live playback == single run; event inside a chunk; 9 invalid inputs rejected (not clipped) + valid edge values; warnings; solver failure caught with partial results kept; non-finite and gate-floor checks; CSV columns/values (ASCII); results ZIP metadata |
+| tests/test_state_space.py | 16 | nominal open-loop CSVs identical to exports/ (line endings normalised); closed-loop shapes, eigenvalues = governor poles, export; other operating points are equilibria; 6 invalid points rejected; linear vs nonlinear (small step < 5 % of change, overload diverges, governor-off exact, normal zero); mismatched comparisons refused; Phase 1 exports regenerate identically |
+| tests/test_app_phase4.py | 14 | headless dashboard: each scenario via the UI equals an independent backend run; reference run; inputs disabled/exit; Reset/Step inside a scenario; invalid input blocks Start with a message; over-capacity warned not clipped; result checks shown; state-space tab (closed loop comparison, current-state point); manual mode unchanged |
+| tests/test_check_setup.py | 1 | `check_setup.py` passes (7 checks) |
+Two existing assertions were **extended, not weakened**: `test_initial_render` still requires the exact button list (now including
+`start_scn`, `exit_scn`), and `test_3d_tab_renders_without_error` the exact tab list (now including "State-space model").
+## Real browser (Chromium + Playwright)
+- `tests/e2e_browser_phase4.py` -> **16/16 passed** (one-click scenario plays live; manual inputs disabled; reference curve; event line;
+  finishes; governor restores 49.79 Hz; results ZIP with both runs, values equal the display, metadata; closed-loop matrices; comparison
+  chart; state-space ZIP; Exit; overload limit warning; no page errors). Screenshots `reports/phase4_*.png`.
+- Regression: `tests/e2e_browser.py` 13/13, `tests/e2e_browser_3d.py` 12/12.
+- Live speed measured: about 7.4 (manual) and 8.7 (scenario) simulated seconds per wall-clock second (no double stepping).
+## Found and fixed during Phase 4
+1. Scenario text claimed the governor closes the gate "at its rate limit" during load rejection; the model shows a peak closing speed of
+   0.136 pu/s (< 0.20 limit, set by the PI gains). Text corrected; the rate-limit check correctly stays silent.
+2. A variable-name clash in `render()` crashed the app on start (found by the headless tests).
+3. Windows: numpy/pathlib write CRLF line endings on Windows, so the new byte-for-byte export tests compare with line endings normalised.
+   The brochure register is pure ASCII (safe with the Windows default encoding).
+## Not shown
+Not run on Windows (Linux, same commands). No validation against plant data.

@@ -65,3 +65,20 @@ Full table in the dashboard (3D plant tab -> "Geometry provenance table"; 43 row
 - Labels overlap in the Overview preset at small window sizes; use the Powerhouse/Penstocks presets or zoom.
 - Flow markers are drawn once per refresh (5 simulated s); the white markers can appear stationary (aliasing), the orange tracer shows the travel.
 - Needs WebGL in the browser (standard in current Chrome/Edge/Firefox on Windows).
+
+## Phase 4: scenarios
+| Item | Value | Class | Note |
+|---|---|---|---|
+| Starting point (all scenarios) | gate 0.8696 pu, pond 334 m, 254.51 MW | published level + calculated | Phase 1 operating point |
+| Inflow during scenarios | 400 m3/s (= starting turbine flow) | assumed | Keeps the pond balanced at the start; exceeds the per-unit share of the channel design flow (320 m3/s, p.12) |
+| Load step | 254.51 -> 280 MW (about +10 %) at 5 s | assumed (demonstration) | Adjustable 0 .. S_base |
+| Load rejection | to 0 MW at 5 s | assumed (demonstration) | Ideal instantaneous breaker opening |
+| Overload | 320 MW at 5 s | assumed (demonstration) | Above the model's full-gate capacity 291.67 MW (calculated); warned, not reduced |
+| Durations | 60 / 120 s | assumed | 1 s .. 3600 s allowed |
+| Model validity speed band | 0.9 .. 1.1 pu | assumed | Outside it results are flagged as indicative only |
+Result checks (`backend.scenarios.assess`) report: governor command at a limit (with duration), gate below y_min, gate at its rate
+limit, speed outside 0.9-1.1 pu, pond above the siphon spillway crest 334.5 m (published, p.12; spilling not modelled) or below the
+assumed live range, head rise above 110 % of 69 m, non-finite values, and solver failures (results up to the failure are kept).
+**Not modelled (affects load rejection most):** overspeed protection, unit trip, speed effect on Francis flow/efficiency, water hammer
+(rigid column), spillway, other units, the grid. A full load rejection therefore reaches 68.5 Hz in the model; a real unit would be
+protected long before that. The dashboard flags this run as outside the valid range.

@@ -31,7 +31,7 @@ def run_to_end(at, max_ticks=2000):
 
 def test_initial_render(at):
     assert not at.exception
-    assert [b.key for b in at.button] == ["run", "pause", "step", "reset"]
+    assert [b.key for b in at.button] == ["run", "pause", "step", "reset", "start_scn", "exit_scn"]  # Phase 4 added the scenario buttons
     v = values(at)
     assert v["Time (s)"] == "0.0" and v["Flow (m3/s)"] == "400.0" and v["Net head (m)"] == "69.00"
     assert v["Power (MW)"] == "254.5" and v["Frequency (Hz)"] == "50.000"

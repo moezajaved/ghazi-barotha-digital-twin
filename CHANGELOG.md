@@ -1,4 +1,9 @@
 # CHANGELOG
+## 2026-10-22 (Phase 4)
+- Added `backend/scenarios.py` (5 one-click scenarios as input schedules on the real model, validation, result checks, results CSV/ZIP with metadata), `backend/state_space.py` (linearisation at nominal or current-gate equilibrium, open or closed loop, ZIP export, linear vs nonlinear comparison), `ui/scenario_panel.py`, `ui/state_space_tab.py`, `check_setup.py`.
+- `app.py`: scenario sidebar (manual inputs disabled while active), event line and governor-OFF reference in charts, result-check panel, results package download, State-space model tab, solver errors keep partial results. Manual mode unchanged.
+- Tests 142 -> 210 (`test_scenarios` 37, `test_state_space` 16, `test_app_phase4` 14, `test_check_setup` 1); two exact assertions extended with the new buttons/tab. Optional `tests/e2e_browser_phase4.py` (16 checks). Screenshots `reports/phase4_*.png`.
+- No new dependencies; no change to model, governor, simulator, 3D code, exports/ or the register.
 ## 2026-10-21 (Phase 3)
 - Added `backend/scene_geometry.py`, `backend/plant3d.py`, `backend/plant3d_component.py`, `frontend/plant3d/index.html` (3D scene with provenance, bound to simulator state; readout panel; in-place updates keep the camera). Why: interactive 3D plant driven by the model.
 - `app.py`: tabs (Simulation / 3D plant / Parameter register); `view3d()` fragment; camera presets; replicate toggle; provenance table. Phase 2 behaviour unchanged (title keeps "single-unit"; no extra buttons).
