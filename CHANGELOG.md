@@ -1,4 +1,9 @@
 # CHANGELOG
+## 2026-10-21 (Phase 3)
+- Added `backend/scene_geometry.py`, `backend/plant3d.py`, `backend/plant3d_component.py`, `frontend/plant3d/index.html` (3D scene with provenance, bound to simulator state; readout panel; in-place updates keep the camera). Why: interactive 3D plant driven by the model.
+- `app.py`: tabs (Simulation / 3D plant / Parameter register); `view3d()` fragment; camera presets; replicate toggle; provenance table. Phase 2 behaviour unchanged (title keeps "single-unit"; no extra buttons).
+- Tests 77 -> 142 (`tests/test_plant3d.py` 57, `tests/test_app_3d.py` 8); optional `tests/e2e_browser_3d.py` (12 checks). Screenshots `reports/plant3d_phase3*.png`.
+- No new dependencies. Phase 1-2 code, exports, register and tests unchanged. Docs: README, PROGRESS, PROJECT_CONTEXT, system_architecture, assumptions_and_limitations, testing_and_validation, user_manual.
 ## 2026-10-19 (Phase 2)
 - Added `backend/governor.py` (PI/droop, limits, rate limits, back-calculation anti-windup; Kb added to settings), `backend/simulator.py`, `app.py` (Streamlit + Plotly), `.streamlit/config.toml`. Why: governed single unit and a working dashboard.
 - Fixed: conditional anti-windup chattered at saturation (solvers failed at load > full-gate capacity) -> back-calculation. Fixed `test_pond_mass_balance` (used pre-step inflow). Dashboard charts were blank while running -> fragment timer, stable chart key, default refresh 0.6 s (measured), legend moved.

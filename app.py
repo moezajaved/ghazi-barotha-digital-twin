@@ -1,4 +1,5 @@
-"""GBHP digital twin: simulation dashboard (Phase 2). Run with:  python -m streamlit run app.py
+"""GBHP digital twin: simulation dashboard + 3D plant view (Phase 2 + Phase 3).
+Run with:  python -m streamlit run app.py
 
 Every number shown comes from backend.simulator / backend.governor / backend.model. SIMULATION ONLY.
 """
@@ -9,6 +10,9 @@ import streamlit as st
 from plotly.subplots import make_subplots
 
 from backend.governor import GOVERNOR_ASSUMPTIONS, GovernorSettings
+from backend.plant3d import (Geometry, SceneState, build_figure, build_geometry, camera_presets,
+                              figure_payload, provenance_rows)
+from backend.plant3d_component import plant3d_view
 from backend.simulator import Simulator, channel_share_per_unit, validate_inputs
 
 REFRESH = max(float(os.environ.get("GBHP_REFRESH_SECONDS", "0.6")), 0.05)
@@ -21,11 +25,16 @@ st.set_page_config(page_title="GBHP Digital Twin", layout="wide")
 if "sim" not in st.session_state:
     st.session_state.sim = Simulator()
     st.session_state.running = False
+    st.session_state.cam_preset = "Overview"
+    st.session_state.cam_nonce = 0   # incremented each time a preset is applied
+if "geom3d" not in st.session_state:
+    st.session_state.geom3d = build_geometry()  # loads once; brochure values don't change at runtime
 sim: Simulator = st.session_state.sim
+geom3d: Geometry = st.session_state.geom3d
 p = sim.p
 u0 = sim.ss["u0"]
 
-st.title("Ghazi Barotha Hydropower: single-unit simulation dashboard")
+st.title("Ghazi Barotha Hydropower: single-unit simulation dashboard and 3D plant")
 st.caption("Educational simulation of one generating unit. Values are SIMULATED from the model in `backend/`; parameters are "
            "published (brochure), calculated or assumed (see the register below). Not connected to the real plant and not "
            "validated against operating data.")
@@ -144,15 +153,58 @@ def live() -> None:
                    "Stopped. Press Run or Step." if sim.t == 0 else f"Paused/stopped at t = {sim.t:.1f} s.")
 
 
-live()
-st.caption("The load input is the load at nominal frequency. The model includes load damping D (assumed), so the unit's steady "
-           "generation differs from it by D*S_base*(w-1) when frequency is off-nominal; this is expected, not an error.")
-st.download_button("Download results (CSV)", sim.to_csv(), "gbhp_simulation.csv", "text/csv", key="download",
-                   disabled=bool(st.session_state.running), help="Pause (or let the run finish) to download the full history.")
+# The 3D view has its own fragment on the same timer, so it also refreshes during a run (a fragment only re-executes
+# its own body). It only READS the simulator (live() advances it), so at most one tick behind the indicators.
+@st.fragment(run_every=REFRESH if st.session_state.running else None)
+def view3d(replicate: bool) -> None:
+    state = SceneState.from_simulator(sim, geom3d.pen_area)
+    cams = camera_presets(geom3d)
+    cam = cams.get(st.session_state.cam_preset, cams["Overview"])
+    summary = state.summary(geom3d, replicate=replicate)
+    st.session_state.view3d_summary = summary          # exactly what the 3D view was given (checked by tests)
+    plant3d_view(figure_payload(build_figure(state, geom3d, replicate=replicate)), cam, st.session_state.cam_nonce,
+                 summary, height=680)
 
-with st.expander("Parameter register (published / calculated / assumed)"):
-    rows = [{"key": q.key, "description": q.description, "value": q.value, "unit": q.unit,
-             "class": q.classification, "source / rationale": q.source} for q in sim.params.values()]
-    rows += [{"key": f"governor.{k}", "description": "Governor setting", "value": getattr(sim.gov, k), "unit": u,
-              "class": "assumed", "source / rationale": why} for k, (u, why) in GOVERNOR_ASSUMPTIONS.items()]
-    st.dataframe(rows, width="stretch", hide_index=True)
+
+tab_sim, tab_3d, tab_reg = st.tabs(["Simulation", "3D plant", "Parameter register"])
+
+with tab_sim:
+    live()
+    st.caption("The load input is the load at nominal frequency. The model includes load damping D (assumed), so the unit's steady "
+               "generation differs from it by D*S_base*(w-1) when frequency is off-nominal; this is expected, not an error.")
+    st.download_button("Download results (CSV)", sim.to_csv(), "gbhp_simulation.csv", "text/csv", key="download",
+                       disabled=bool(st.session_state.running), help="Pause (or let the run finish) to download the full history.")
+
+with tab_3d:
+    _3d_cols = st.columns([3, 1])
+    with _3d_cols[1]:
+        st.markdown("**Camera preset**")
+        _presets = list(camera_presets(geom3d).keys())
+        _selected = st.selectbox("Jump to", _presets, index=_presets.index(st.session_state.cam_preset), key="cam_sel",
+                                 help="Choosing a preset moves the camera once; afterwards your own rotation/zoom is kept.")
+        if _selected != st.session_state.cam_preset:
+            st.session_state.cam_preset = _selected
+            st.session_state.cam_nonce += 1
+        st.markdown("---")
+        replicate = st.toggle("Show all 5 units", value=True, key="replicate",
+                              help="All 5 units show the simulated unit 1 state. Turn off to show only unit 1 and the other 4 as idle.")
+        st.markdown("---")
+        st.caption("Penstock colour: flow 0 to 460 m3/s  \nGenerator colour: power 0 to 292.7 MW (estimate)  \nGreen bar: gate 0 to 1 pu  \n\n"
+                   "Drag to rotate · scroll to zoom · right-drag to pan.\n\n"
+                   "**Geometry provenance:** labels show [published] / [calculated] / [schematic] / [simulated].\n\n"
+                   "All simulated values come from `backend.simulator` at the current step — nothing is invented.")
+        with st.expander("Geometry provenance table"):
+            st.dataframe([{**r, "value": str(r["value"])} for r in provenance_rows(geom3d)], hide_index=True, width="stretch")
+    with _3d_cols[0]:
+        view3d(replicate)
+        st.caption("SIMULATED values (isolated single-unit model, assumed parameters). "
+                   "Geometry is schematic (illustrative) unless tagged [published]. "
+                   "Not connected to the real plant. Not validated against operating data.")
+
+with tab_reg:
+    with st.expander("Simulation parameter register (published / calculated / assumed)", expanded=True):
+        rows = [{"key": q.key, "description": q.description, "value": q.value, "unit": q.unit,
+                 "class": q.classification, "source / rationale": q.source} for q in sim.params.values()]
+        rows += [{"key": f"governor.{k}", "description": "Governor setting", "value": getattr(sim.gov, k), "unit": u,
+                  "class": "assumed", "source / rationale": why} for k, (u, why) in GOVERNOR_ASSUMPTIONS.items()]
+        st.dataframe(rows, width="stretch", hide_index=True)

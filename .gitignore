@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .venv/
 .pytest_cache/
+
+# copied from the installed plotly package at run time (see backend/plant3d_component.py)
+frontend/plant3d/plotly.min.js

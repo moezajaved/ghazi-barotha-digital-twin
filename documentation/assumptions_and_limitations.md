@@ -46,3 +46,22 @@ Settings can be changed in the dashboard (expander) or via `GovernorSettings(...
 - Default inflow (400 m3/s) exceeds this unit's share of the channel design flow (1600/5 = 320 m3/s, brochure p.12); the dashboard says so.
 - Live charts are redrawn from scratch by Streamlit on each update; at the default 0.6 s refresh they are blank about 3% of the time (measured).
 - Dashboard is a local single-user app; "live" speed is `chunk / refresh` (default 5 s per 0.6 s, about 9x real time), not real time.
+
+## Phase 3: 3D geometry provenance
+Full table in the dashboard (3D plant tab -> "Geometry provenance table"; 43 rows, from `backend.plant3d.build_geometry`).
+| Class | What |
+|---|---|
+| published (brochure, page) | 5 units; penstocks: 5, D 10.6 m, L 222 m; headpond normal level 334 m; intake crest 305.5 m, 10 openings; siphon spillway crest; barrage normal pond 340 m, 20 standard bays, crest 332.2 m; power channel bed width, full supply depth, side slope, slope 1:9600, length 51.9 km; 500 kV switchyard 6 bays, breaker-and-half; 500 kV transmission; 5 three-phase transformer banks; Francis turbines; full-gate flow 460 m3/s |
+| calculated | tailwater 264.5 m (model z_tw); penstock horizontal run 217.1 m (sqrt(L^2-dz^2)); penstock area 88.25 m2; channel flow area; channel fall; 292.69 MW colour-scale maximum (eta*rho*g*460*69, the calibration estimate; the model's own full-gate equilibrium is 291.67 MW) |
+| schematic (illustrative, NOT plant dimensions) | plan layout and relative positions of all structures; unit spacing 45 m; headpond, tailrace and barrage-pool extents; channel drawn 255 m long (~200:1 compressed); powerhouse size; turbine/generator/shaft sizes; transformer and switchyard positions; straight penstock alignment; gate-bar size |
+| simulated | every changing quantity (pond level, flow, gate, speed, power, frequency, head, flow-marker positions) |
+
+## Phase 3 limitations
+- The brochure has no site plan, powerhouse drawings or machine dimensions, so the scene is a **schematic arrangement** with true elevations
+  and published pipe/channel dimensions; it is not a survey-accurate model of the real site.
+- Only unit 1 is simulated; units 2-5 show the same state (or are shown idle). No unit-to-unit differences.
+- The barrage and power channel are context only: the model has no barrage or channel dynamics; channel inflow is the dashboard input.
+- Headpond level changes are millimetres over typical runs (the readout shows them; the surface movement is not visible at plant scale).
+- Labels overlap in the Overview preset at small window sizes; use the Powerhouse/Penstocks presets or zoom.
+- Flow markers are drawn once per refresh (5 simulated s); the white markers can appear stationary (aliasing), the orange tracer shows the travel.
+- Needs WebGL in the browser (standard in current Chrome/Edge/Firefox on Windows).

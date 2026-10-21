@@ -1,0 +1,45 @@
+<!doctype html>
+<!-- GBHP 3D plant view: a minimal Streamlit component (no build step). It renders the Plotly figure that backend/plant3d.py
+     builds from the simulation state, and updates it IN PLACE so the user's camera survives live updates.
+     plotly.min.js is copied here from the installed plotly package by backend/plant3d_component.py (works offline). -->
+<html><head><meta charset="utf-8"><script src="plotly.min.js"></script>
+<style>
+  html,body{margin:0;height:100%;font-family:system-ui,Segoe UI,Arial,sans-serif;background:#f4f6f8}
+  #g{width:100%;height:100%}
+  #badge{position:absolute;left:8px;top:6px;z-index:5;font-size:11px;color:#374151;background:rgba(255,255,255,.85);padding:3px 8px;border-radius:4px;border:1px solid #d1d5db;pointer-events:none}
+  #summary{display:none}
+  #readout{position:absolute;left:8px;bottom:8px;z-index:5;font-size:12px;color:#111827;background:rgba(255,255,255,.92);padding:6px 10px;border-radius:6px;border:1px solid #d1d5db;pointer-events:none;line-height:1.45}
+  #readout b{display:block;font-size:11px;color:#6b7280;font-weight:600;margin-bottom:2px}
+  #readout td{padding:0 6px 0 0} #readout td.v{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+</style></head><body>
+<div id="badge">SIMULATED values (isolated single-unit model, assumed parameters) &middot; geometry is schematic unless tagged [published]</div>
+<div id="g"></div><div id="summary"></div><div id="readout"></div>
+<script>
+var gd=document.getElementById("g"), dragging=false, pending=null, lastNonce=null, dragStart=0, ready=false;
+function send(type,data){window.parent.postMessage(Object.assign({isStreamlitMessage:true,type:type},data),"*")}
+function liveCam(){ try{ return JSON.parse(JSON.stringify(gd._fullLayout.scene._scene.getCamera())); }catch(e){ return null; } }
+function apply(a){
+  var layout=a.fig.layout; layout.scene=layout.scene||{};
+  if(a.camera_nonce!==lastNonce){ lastNonce=a.camera_nonce; if(a.camera) layout.scene.camera=a.camera; }   // a preset was requested
+  else { var c=liveCam(); if(c) layout.scene.camera=c; }                                                // otherwise keep the user's view
+  window.__renders=(window.__renders||0)+1;
+  window.__summary=a.summary||null;
+  showReadout(a.summary||{});
+  var s=document.getElementById("summary"); s.setAttribute("data-json",JSON.stringify(a.summary||{})); s.textContent=JSON.stringify(a.summary||{});
+  Plotly.react(gd,a.fig.data,layout,{responsive:true,displaylogo:false,scrollZoom:true}).then(function(){ ready=true; window.__ready=true; });
+  send("streamlit:setFrameHeight",{height:a.height});
+}
+// Readout panel: the same simulator values the scene is drawn from (unit 1, simulated).
+function showReadout(s){ if(s.t===undefined) return;
+  var r=[["Time",s.t.toFixed(1),"s"],["Headpond level",s.h_p.toFixed(3),"m"],["Flow",s.Q.toFixed(1),"m3/s"],["Penstock velocity",s.v_pen.toFixed(2),"m/s"],
+         ["Gate position",s.y.toFixed(3),"pu"],["Unit speed",s.w.toFixed(4),"pu"],["Power",s.P_gen.toFixed(1),"MW"],["Frequency",s.f.toFixed(3),"Hz"],["Net head",s.h_t.toFixed(2),"m"]];
+  document.getElementById("readout").innerHTML="<b>UNIT 1 &middot; SIMULATED"+(s.governor_on?" &middot; governor on":" &middot; governor off")+"</b><table>"+
+    r.map(function(x){return "<tr><td>"+x[0]+"</td><td class=v>"+x[1]+"</td><td>"+x[2]+"</td></tr>"}).join("")+"</table>"; }
+// While the mouse is down, hold back updates (a re-render mid-drag would fight the rotation); apply the latest one afterwards.
+document.addEventListener("mousedown",function(){dragging=true;dragStart=Date.now()},true);
+function release(){ dragging=false; setTimeout(function(){ if(!dragging && pending){var p=pending;pending=null;apply(p);} },150); }
+window.addEventListener("mouseup",release,true); window.addEventListener("blur",release);
+window.addEventListener("message",function(e){ if(e.data.type!=="streamlit:render")return; var a=e.data.args;
+  if(dragging && Date.now()-dragStart<8000){ pending=a; return; } apply(a); });
+send("streamlit:componentReady",{apiVersion:1});
+</script></body></html>

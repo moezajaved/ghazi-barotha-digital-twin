@@ -50,3 +50,24 @@ Also noted: the slightly positive closed-loop pond pole (explained and now teste
 ## Not shown
 Validation against the real plant: none (no operating data). Governor gains are educational assumptions, tuned only for damping on the assumed plant.
 Windows launch was not run on Windows; it was run here on Linux with the same commands (`python -m streamlit run app.py`).
+
+---
+# Phase 3 (2026-10-21; same versions as Phase 2)
+## Automated: `python -m pytest` -> **142 passed in ~20 s** (77 Phase 1-2, unchanged and all passing, + 65 new)
+| File | Tests | Covers |
+|---|---|---|
+| tests/test_plant3d.py | 57 | mesh primitives (box, cylinder, merge, validation, bad input); geometry equals published register values (5 units, D, L, 334 m, 460 m3/s); calculated values (area, run); provenance classes and sources; SceneState from simulator; flow-marker advection and tracer; figure traces, no NaN, headpond surface = h_p; JSON payload; camera presets; true-proportion aspect ratio; one flow tracer per live penstock |
+| tests/test_app_3d.py | 8 | headless app: 3 tabs render; values given to the 3D view equal the simulator state (t, h_p, Q, y, y_cmd, w, f, P_gen, h_t, Q_in) at start, after Step, during and after Run, after Reset; advection = 5 s * 400/A; replicate toggle; camera preset applied once |
+## Real browser (Chromium + Playwright, software WebGL)
+- `tests/e2e_browser_3d.py` -> **12/12 passed:** component loads; Plotly from the local file; WebGL scene drawn (16 traces); 3D values = dashboard indicators at t = 0 and after the run;
+  readout panel shows the model values; 3D view refreshes during Run (t = 0, 5, 10, 15, 20, 25, 35 s sampled); frequency dips under +25 MW load (49.79 Hz);
+  user camera kept across live updates (change 2e-16); camera preset moves the camera; no page errors; **no internet requests**. Screenshots: `reports/plant3d_phase3*.png`.
+- Phase 2 regression `tests/e2e_browser.py` re-run with the tabbed layout -> **13/13 passed**.
+- Chart blanking re-measured with the 3D fragment also running: 0 of 153 samples blank over 30 s (Simulation tab, default 0.6 s refresh).
+## Issues found and fixed during Phase 3
+1. Existing test `test_initial_render` failed after my first integration (extra "Apply preset" button; title changed). The test was not changed: the preset now applies on selection (no extra button) and the title keeps "single-unit".
+2. Mixed-type `value` column in the provenance table crashed Streamlit's dataframe conversion (pyarrow); values are shown as text.
+3. Placing the 3D view in a normal tab would have frozen it during Run (only the fragment re-executes); it now has its own fragment. Verified in the real browser.
+4. Overview camera cut off the barrage; widened. In-scene readout text was unreadable; added an HTML readout panel bound to the same values.
+## Not shown
+Not run on Windows (Linux, same commands). No validation of geometry or behaviour against the real plant.
