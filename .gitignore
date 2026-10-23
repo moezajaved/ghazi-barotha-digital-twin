@@ -5,3 +5,18 @@ __pycache__/
 
 # copied from the installed plotly package at run time (see backend/plant3d_component.py)
 frontend/plant3d/plotly.min.js
+
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Local Python environments
+venv/
+env/
+
+# OS files
+.DS_Store
+Thumbs.db
