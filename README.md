@@ -3,7 +3,7 @@ University EE project: simulation-based model of the Ghazi Barotha Hydropower Pr
 Not connected to the real plant and not validated against real operating data.
 
 ## Status
-Phases 1-4 done and tested: model + state-space export, PI/droop governor + Streamlit dashboard, interactive 3D plant view driven by the simulation, and one-click demonstration scenarios with results/state-space export. See `PROGRESS.md`.
+Phases 1-4 done and tested: model + state-space export, PI/droop governor + Streamlit dashboard, interactive 3D plant view driven by the simulation, and one-click demonstration scenarios with results/state-space export. See `PROGRESS.md`. Final report: `reports/GBHP_Digital_Twin_Technical_Report.docx` (and `.pdf`; source `documentation/technical_report.md`).
 
 ## Run (Windows, once Python 3 is installed from python.org; tick "Add Python to PATH")
 ```

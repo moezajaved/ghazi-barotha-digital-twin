@@ -1,4 +1,7 @@
 # CHANGELOG
+## 2026-10-23 (Phase 5)
+- Final technical report: `documentation/technical_report.md` (13 sections, 6 equation blocks, 4 figures in `documentation/report_figures/`), `reports/GBHP_Digital_Twin_Technical_Report.docx` (Word, built with pandoc) and `.pdf`. Editable online copy: Claude doc "Ghazi Barotha Digital Twin: Technical Report". Includes the demonstration guide (Section 11).
+- No code, model, test or data changes. All numbers in the report taken from the model runs, register and test results recorded in Phases 1-4.
 ## 2026-10-22 (Phase 4)
 - Added `backend/scenarios.py` (5 one-click scenarios as input schedules on the real model, validation, result checks, results CSV/ZIP with metadata), `backend/state_space.py` (linearisation at nominal or current-gate equilibrium, open or closed loop, ZIP export, linear vs nonlinear comparison), `ui/scenario_panel.py`, `ui/state_space_tab.py`, `check_setup.py`.
 - `app.py`: scenario sidebar (manual inputs disabled while active), event line and governor-OFF reference in charts, result-check panel, results package download, State-space model tab, solver errors keep partial results. Manual mode unchanged.
